@@ -44,13 +44,7 @@ final class TaskListViewController: UITableViewController {
         let indexPath = IndexPath(row: taskList.count - 1, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
         
-        if storageManager.persistentContainer.viewContext.hasChanges {
-            do {
-                try storageManager.persistentContainer.viewContext.save()
-            } catch {
-                print(error)
-            }
-        }
+        saveToCoreData()
     }
     
     private func delete(at indexPath: Int) {
@@ -59,18 +53,15 @@ final class TaskListViewController: UITableViewController {
         taskList.remove(at: indexPath)
         
         storageManager.persistentContainer.viewContext.delete(taskToDelete)
-        if storageManager.persistentContainer.viewContext.hasChanges {
-            do {
-                try storageManager.persistentContainer.viewContext.save()
-            } catch {
-                print(error)
-            }
-        }
+        saveToCoreData()
     }
     
     private func redactTask(at indexPath: Int, with value: String) {
         taskList[indexPath].title = value
-                        
+        saveToCoreData()
+            }
+    
+    private func saveToCoreData() {
         if storageManager.persistentContainer.viewContext.hasChanges {
             do {
                 try storageManager.persistentContainer.viewContext.save()
